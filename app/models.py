@@ -58,7 +58,6 @@ class Service_tickets(Base):
     service_desc: Mapped[str] = mapped_column(String(120), nullable=False)
     price: Mapped[float] = mapped_column(Float)
     VIN: Mapped[str] = mapped_column(String(30), nullable=False)
-    loan_date: Mapped[date] = mapped_column(Date, nullable=True)
     service_date: Mapped[date] = mapped_column(Date, nullable=True)
 
     #Relationships
