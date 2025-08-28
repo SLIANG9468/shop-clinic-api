@@ -1,9 +1,31 @@
 from . import mechanics_bp
-from .schemas import mechanic_schema, mechanics_schema
+from .schemas import mechanic_schema, mechanics_schema, login_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import Mechanics
 from app.models import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.util.auth import encode_token, token_required
+
+@mechanics_bp.route('/login', methods=['POST'])
+
+def login():
+    try:
+        data = login_schema.load(request.json) # Send email and password
+    except ValidationError as e:
+        return jsonify(e.messages), 400 #Returning the error as a response so my client can see whats wrong.
+    
+    mechanic = db.session.query(Mechanics).where(Mechanics.email==data['email']).first() #Search my db for a mechanic with the passed in email
+
+    if mechanic and check_password_hash(mechanic.password, data['password']): #Check the mechanic stored password hash against the password that was sent
+        token = encode_token(mechanic.id, role  = 'mechanic')
+        return jsonify({
+            "message": f'Welcome {mechanic.last_name}',
+            "token": token
+        }), 200
+    
+    return jsonify("Invalid email or password!"), 403
+
 
 @mechanics_bp.route('/', methods=['POST']) #route servers as the trigger for the function below.
 def create_mechanic():
@@ -12,6 +34,7 @@ def create_mechanic():
     except ValidationError as e:
         return jsonify(e.messages), 400 #Returning the error as a response so my client can see whats wrong.
     
+    data['password'] = generate_password_hash(data['password'])
     new_mechanic = Mechanics(**data) #Creating User object
     db.session.add(new_mechanic)
     db.session.commit()
@@ -32,8 +55,10 @@ def read_mechanic(mechanic_id):
 
 #Delete a mechanic
 @mechanics_bp.route('/<int:mechanic_id>', methods=['DELETE'])
+@token_required
 def delete_mechanic(mechanic_id):
-    mechanic = db.session.get(Mechanics, mechanic_id)
+    token_id = request.mechanic_id
+    mechanic = db.session.get(Mechanics, token_id)
     db.session.delete(mechanic)
     db.session.commit()
     return jsonify({"message": f"Successfully deleted mechanic {mechanic_id}"}), 200
@@ -52,7 +77,7 @@ def update_mechanic(mechanic_id):
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
     
-    for key, value in mechanic_data.items(): #Looping over attributes and values from user data dictionary
+    for key, value in mechanic_data.items(): #Looping over attributes and values from mechanic data dictionary
         setattr(mechanic, key, value) # setting Object, Attribute, Value to replace
 
     db.session.commit()

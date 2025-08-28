@@ -157,7 +157,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"first_name\": \"Lihe\",\n    \"last_name\": \"Zhou\",\n    \"email\": \"LiheZhou@gmail.com\",\n    \"password\": \"847-666-0003\",\n    \"salary\": 10050.99,\n    \"address\": \"Barrington, IL\"\n}",
+							"raw": "{\n    \"first_name\": \"Token4\",\n    \"last_name\": \"Zhou\",\n    \"email\": \"LiheZhou4@gmail.com\",\n    \"password\": \"847-666-0004\",\n    \"salary\": 999.99,\n    \"address\": \"Barrington, IL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -248,6 +248,16 @@
 				{
 					"name": "Delete Mechanic",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY4NDM4MzUsImlhdCI6MTc1NjQxMTgzNSwic3ViIjoiMyIsInJvbGUiOiJtZWNoYW5pYyJ9.NSm_KXH-UuJ11PrA2KK-dKhvdytBpZ2eJqKYnM5-JME",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -295,6 +305,38 @@
 							"path": [
 								"mechanics",
 								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"LiheZhou4@gmail.com\",\n    \"password\": \"847-666-0004\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"login"
 							]
 						}
 					},
