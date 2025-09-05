@@ -1,5 +1,6 @@
 from . import mechanics_bp
 from .schemas import mechanic_schema, mechanics_schema, login_schema
+from app.blueprints.service_tickets.schemas import service_ticket_schema, service_tickets_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import Mechanics
@@ -82,3 +83,33 @@ def update_mechanic(mechanic_id):
 
     db.session.commit()
     return mechanic_schema.jsonify(mechanic), 200
+
+#get my tickets
+@mechanics_bp.route('/my-tickets/<int:mechanic_id>', methods = ['GET'])
+@token_required
+def get_my_tickets(mechanic_id):
+    token_id = request.mechanic_id
+    mechanic = db.session.get(Mechanics, token_id)
+    
+    if not mechanic:
+        return jsonify({"message": "mechanic not found"}), 404
+
+    return service_tickets_schema.jsonify(mechanic.service_tickets), 200
+
+# mechanic who has worked on the most ticket
+@mechanics_bp.route('/most-tickets/', methods = ['GET'])
+def get_mechanics_worked_most_tickets():
+    print(" in the right route")
+    mechanics = db.session.query(Mechanics).all()
+    print(f"all mechanics: {mechanics}")
+
+    mechanics.sort(key= lambda mechanic: len(mechanic.service_tickets), reverse = True)
+    output = []
+    for mechanic in mechanics:
+        print(f"mechanic id: {mechanic.id}")
+        mechanic_format = {
+            "mechanic": mechanic_schema.dump(mechanic),
+            "service_tickets": len(mechanic.service_tickets)
+        }
+        output.append(mechanic_format)
+    return jsonify(output), 200
