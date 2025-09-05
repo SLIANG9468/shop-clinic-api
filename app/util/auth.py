@@ -5,7 +5,7 @@ from functools import wraps
 from flask import request, jsonify
 
 
-SECRET_KEY = 'super secret secrets'
+SECRET_KEY = 'super secret secrets from Sherri'
 
 def encode_token(mechanic_id, role='mechanic'):
     payload = {

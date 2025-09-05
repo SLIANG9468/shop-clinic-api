@@ -4,6 +4,7 @@ from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import Customers
 from app.models import db
+from app.extensions import limiter, cache
 
 @customers_bp.route('/', methods=['POST']) #route servers as the trigger for the function below.
 def create_customer():
@@ -19,6 +20,7 @@ def create_customer():
 
 #read Customers
 @customers_bp.route('/', methods=['GET'])
+@cache.cached(timeout = 30)
 def read_customers():
     customers = db.session.query(Customers).all()
     return customers_schema.jsonify(customers), 200
@@ -31,6 +33,7 @@ def read_customer(customer_id):
 
 #Delete a customer
 @customers_bp.route('/<int:customer_id>', methods=['DELETE'])
+@limiter.limit("5 per day")
 def delete_customer(customer_id):
     customer = db.session.get(Customers, customer_id)
     db.session.delete(customer)
