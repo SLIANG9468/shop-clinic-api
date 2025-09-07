@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import Date, ForeignKey, String, Table, Column, Float
 
-
-
 #Create a base class for our models
 class Base(DeclarativeBase):
     pass
@@ -22,6 +20,13 @@ ticket_mechanics = Table(
     Base.metadata,
     Column('ticket_id', ForeignKey('service_tickets.id')),
     Column('mechanic_id', ForeignKey('mechanics.id'))
+)
+
+inventory_service_tickets = Table(
+    'inventory_service_tickets',
+    Base.metadata,
+    Column('part_description_id', ForeignKey('part_descriptions.id')),
+    Column('service_ticket_id', ForeignKey('service_tickets.id'))
 )
 
 class Customers(Base):
@@ -63,4 +68,28 @@ class Service_tickets(Base):
     #Relationships
     customer: Mapped['Customers'] = relationship('Customers', back_populates='service_tickets')
     mechanics: Mapped[list['Mechanics']] = relationship("Mechanics", secondary=ticket_mechanics, back_populates='service_tickets') #Many to Many relationship going through the loan_books table
-   
+    part_descriptions: Mapped[list['Part_descriptions']] = relationship("Part_descriptions", secondary=inventory_service_tickets,back_populates='service_tickets')
+    parts: Mapped[list['Parts']] = relationship("Parts", back_populates='service_ticket')
+# Inventory model   
+class Part_descriptions(Base):
+    __tablename__ = 'part_descriptions' #lowercase plural form of resource
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=True)
+
+    #Relationship
+    parts: Mapped[list['Parts']] = relationship('Parts', back_populates= 'part_description')
+    service_tickets:Mapped[list['Service_tickets']] = relationship('Service_tickets', secondary=inventory_service_tickets,back_populates='part_descriptions')
+
+# Part model   
+class Parts(Base):
+    __tablename__ = 'parts' #lowercase plural form of resource
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    desc_id: Mapped[int] = mapped_column(ForeignKey('part_descriptions.id'), nullable=False)
+    ticket_id: Mapped[int] = mapped_column(ForeignKey('service_tickets.id'), nullable=True)
+
+    #Relationships
+    part_description: Mapped['Part_descriptions'] = relationship('Part_descriptions', back_populates = 'parts')
+    service_ticket: Mapped['Service_tickets'] = relationship('Service_tickets', back_populates='parts')

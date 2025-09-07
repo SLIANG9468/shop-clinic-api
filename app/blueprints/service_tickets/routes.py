@@ -1,8 +1,9 @@
 from . import service_tickets_bp
 from .schemas import service_ticket_schema, service_tickets_schema
+from app.blueprints.parts.schemas import parts_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import Service_tickets, db, Mechanics
+from app.models import Service_tickets, db, Mechanics, Parts
 from app.blueprints.mechanics.schemas import mechanic_schema, mechanics_schema
 
 from datetime import datetime, date
@@ -62,3 +63,21 @@ def remove_mechanic(service_ticket_id, mechanic_id):
 def get_service_tickets():
     service_tickets = db.session.query(Service_tickets).all()
     return service_tickets_schema.jsonify(service_tickets), 200
+
+#Add a single part to an existing service_ticket. 
+@service_tickets_bp.route('/<int:service_ticket_id>/add-part/<int:part_id>', methods=['PUT'])
+
+def add_part(service_ticket_id, part_id):
+    service_ticket = db.session.get(Service_tickets, service_ticket_id)
+    part = db.session.get(Parts, part_id)
+
+    if part not in service_ticket.parts: #checking to see if a relationship already exist between service_ticket and part
+        service_ticket.parts.append(part) #creating a relationship between service_ticket and part
+        db.session.commit()
+        return jsonify({
+            'message': f'successfully add {part.id} to service_ticket',
+            'service_ticket': service_ticket_schema.dump(service_ticket),  #use dump when the schema is adding just a piece of the return message
+            'parts': parts_schema.dump(service_ticket.parts) #using the parts_schema to serialize the list of parts related to the service_ticket
+        }), 200
+    
+    return jsonify("This part is already on the service_ticket"), 400

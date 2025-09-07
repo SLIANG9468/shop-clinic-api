@@ -341,6 +341,38 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get My Ticket",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "worked on most tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/most-tickets/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"most-tickets",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -437,7 +469,7 @@
 					"response": []
 				},
 				{
-					"name": "Retrieve All Mechanics",
+					"name": "Retrieve All Service Tickets",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -460,6 +492,146 @@
 							"port": "5000",
 							"path": [
 								"service_tickets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Part_description",
+			"item": [
+				{
+					"name": "Create Part Description",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Saucony\",\n    \"price\": 99.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/part_descriptions/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"part_descriptions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read All Part_description",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Part_description",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Saucony\",\n    \"price\": 99.99\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/part_descriptions/3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"part_descriptions",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Part_description",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Adidas\",\n    \"price\": 49.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/part_descriptions/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"part_descriptions",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Part",
+			"item": [
+				{
+					"name": "Create Part",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"desc_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts"
 							]
 						}
 					},
