@@ -70,7 +70,10 @@ def get_service_tickets():
 def add_part(service_ticket_id, part_id):
     service_ticket = db.session.get(Service_tickets, service_ticket_id)
     part = db.session.get(Parts, part_id)
-
+    
+    if part.ticket_id != None: 
+        return jsonify("This part is already on the service_ticket"), 400
+    
     if part not in service_ticket.parts: #checking to see if a relationship already exist between service_ticket and part
         service_ticket.parts.append(part) #creating a relationship between service_ticket and part
         db.session.commit()
@@ -80,4 +83,3 @@ def add_part(service_ticket_id, part_id):
             'parts': parts_schema.dump(service_ticket.parts) #using the parts_schema to serialize the list of parts related to the service_ticket
         }), 200
     
-    return jsonify("This part is already on the service_ticket"), 400

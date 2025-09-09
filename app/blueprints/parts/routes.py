@@ -36,7 +36,6 @@ def delete_part(part_id):
     db.session.commit()
     return jsonify({"message": f"Successfully deleted part {part_id}"}), 200
 
-
 #Update a part
 @parts_bp.route('/<int:part_id>', methods=['PUT'])
 def update_part(part_id):

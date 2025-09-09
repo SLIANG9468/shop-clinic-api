@@ -496,6 +496,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Add Part to Service Ticket",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"desc_id\": 1\n\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_tickets/1/add-part/3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_tickets",
+								"1",
+								"add-part",
+								"3"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -632,6 +661,46 @@
 							"port": "5000",
 							"path": [
 								"parts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read All Part",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Part",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"desc_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts",
+								"1"
 							]
 						}
 					},
