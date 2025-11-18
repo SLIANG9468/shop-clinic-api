@@ -6,11 +6,14 @@ from .blueprints.mechanics import mechanics_bp
 from .blueprints.service_tickets import service_tickets_bp
 from .blueprints.part_descriptions import part_descriptions_bp
 from .blueprints.parts import parts_bp
+from flask_cors import CORS
 
 def create_app(config_name):
 
     app = Flask(__name__)
     app.config.from_object(f'config.{config_name}')
+    CORS(app)
+    
 
     db.init_app(app)
     ma.init_app(app)

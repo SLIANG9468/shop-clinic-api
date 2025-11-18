@@ -22,7 +22,8 @@ def login():
         token = encode_token(mechanic.id, role  = 'mechanic')
         return jsonify({
             "message": f'Welcome {mechanic.last_name}',
-            "token": token
+            "token": token,
+            "mechanic":mechanic_schema.dump(mechanic)
         }), 200
     
     return jsonify("Invalid email or password!"), 403
