@@ -1,0 +1,268 @@
+swagger: '2.0'
+info:
+  title: "Mechanics Management API"
+  description: "Used to manage the everyday functionalities of a mechanics"
+  version: "0.0.1"
+
+host: "127.0.0.1:5000" #During development my API is served on my local host (will change when we go to prod)
+schemes:
+  - "http"
+consumes:
+  - "application/json" #MY api recieves json data
+produces:
+  - "application/json" #and produces json data
+
+securityDefinitions: #Describing how to add token auth to the endpoints
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+
+paths: #Information about our routes
+
+  /mechanics/login: #endpoint starts the path
+    post: #request type (post,get,put,delete)
+      tags:
+        - Mechanics #Adds this route to a category
+      summary: "Login endpoint (generates a token)" #At a glance information about the endpoint
+      description: "Validates mechanic credentials (email and password), and produces a mechanic specific token." #more in-depth info about the endpoint
+      parameters: #info about the data being sent (DONT FORGET THE 'S' in parameters)
+        - in: "body" #Where will this info come from
+          name: "body"
+          description: "Login Credentials" #What are you sending
+          required: true 
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Login Successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+          examples:
+            application/json:
+              message: "Welcome Mechanic"
+              token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOj..."
+              mechanic: object
+
+  /mechanics:
+    post: #Create Mechanic Endpoint
+      tags:
+        - Mechanics
+      summary: "Register a new Mechanic"
+      description: "Send in mechanic info, to create a mechanic profile that will be stored in the database. Address is optional field."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "New Mechanic Information"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicInput"
+          
+      responses:
+        201:
+          description: "Creation Successful"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+          examples:
+            application/json:
+              id: 2
+              first_name: "Steve"
+              last_name: "Chen"
+              email: "steve.chen@email.com"
+              password: "<encrypted password>"
+              salary: 1000
+              address: "123 Fun St."
+    
+    get: #Get all mechanics Endpoint
+      tags:
+        - Mechanics
+      summary: "Returns all mechanics"
+      description: "Endpoint to recieve an array of mechanic objects."
+      responses:
+        200:
+          description: "Successfully Retrieved Mechanics"
+          schema:
+            $ref: "#/definitions/MechanicsResponse"
+
+  /mechanics/{id}: #endpoint starts the path
+    put: #Update a mechanic
+      tags:
+        - Mechanics
+      summary: "Update Mechanic Endpoint"
+      description: "Endpoint to update a mechanic, requires a token, mechanic will be identified by the token"
+      security:
+        - bearerAuth: [] #Referencing our Token Auth definition (Make sure when authorizing in Swagger you add Bearer <Token>)
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Mechanic Updates"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicUpdateInput"
+          
+      responses:
+        200:
+          description: "Update Successful"
+          schema:
+            $ref: "#/definitions/MechanicUpdateResponse"
+          examples:
+            application/json:
+              first_name: "Steve"
+              last_name: "Zhang"
+              email: "steve.zhang@email.com"
+              id: 6
+              password: "<encrypted password>"
+              salary: 1000
+              address: "123 Fun St."
+    
+    delete: #Delete a mechanic
+      tags:
+        - Mechanics
+      summary: "Delete a Mechanic"
+      description: "Delete a mechanic, requires a token, token will be used to identify mechanic to delete."
+      security:
+        - bearerAuth: []
+      parameters:
+      responses:
+        200:
+        description:"Delete Successfully"
+        message: "Successfully deleted mechanic 6"
+
+
+
+definitions: #Information about the shape of input and output json
+
+  LoginCredentials: #Input data required for login route
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+
+    required:
+      - email
+      - password
+
+  LoginResponse: #Response from /login endpoint
+    type: object
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+
+  MechanicInput: #Sending mechanic Information
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "Steve"
+      last_name:
+        type: string
+        example: "Chen"
+      email:
+        type: string
+        example: "steve.chen@email.com"
+      password:
+        type: string
+        example: "12345678"
+      salary:
+        type: number
+        format: float
+        example: 1000.00
+      address:
+        type: string
+        example: "123 Fun St."
+
+    required:
+      - first_name
+      - last_name
+      - email
+      - password
+      - salary
+
+
+  MechanicResponse: #Recieve Single Mechanic Profile
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      address:
+        type: string
+      salary:
+        type: number
+        format: float
+
+  MechanicsResponse: #Response for multiple mechanics
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: <encrypted password>
+        salary: 
+          type: number
+          format: float
+        address:
+          type: string
+          
+  MechanicUpdateInput: #input for update mechanics
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "Steve"
+      last_name:
+        type: string
+        example: "Zhang"
+      email:
+        type: string
+        example: "steve.Zhang@email.com"
+      password:
+        type: string
+        example: "12345678"
+      salary:
+        type: number
+        format: float
+        example: 1000.00
+      address:
+        type: string
+        example: "123 Fun St."
+
+  MechanicUpdateResponse: #Response for multiple mechanics
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      address:
+        type: string
+      salary:
+        type: number
+        format: float
+
