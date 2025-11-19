@@ -72,32 +72,32 @@ class TestMechanics(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
 
-    # def test_get_mechanics(self):
+    def test_get_mechanics(self):
     
-    #     response = self.client.get('/mechanics/')
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.get_json()
-    #     self.assertEqual(data[0]['first_name'], 'Steve')
+        response = self.client.get('/mechanics/')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data[0]['first_name'], 'Steve')
 
-    # def test_login(self):
-    #     login_creds = {
-    #         "email": "tester@email.com",
-    #         "password": "123"
-    #     }
+    def test_login(self):
+        login_creds = {
+            "email": "tester@email.com",
+            "password": "123"
+        }
 
-    #     response = self.client.post('/mechanics/login/', json=login_creds)
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.get_json()
-    #     self.assertIn('token', data)
+        response = self.client.post('/mechanics/login', json=login_creds)
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertIn('token', data)
 
 
-    # def test_delete(self):
-    #     headers = {"Authorization": "Bearer " + self.token}
+    def test_delete(self):
+        headers = {"Authorization": "Bearer " + self.token}
 
-    #     response = self.client.delete("/mechanics/1/", headers=headers) #Sending delete request to /mechanics with my Authorization headers
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.get_json()
-    #     self.assertEqual(data['message'], 'Successfully deleted mechanic 1')
+        response = self.client.delete("/mechanics/1/", headers=headers) #Sending delete request to /mechanics with my Authorization headers
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['message'], 'Successfully deleted mechanic 1')
 
 
     # def test_unauthorized_delete(self):
