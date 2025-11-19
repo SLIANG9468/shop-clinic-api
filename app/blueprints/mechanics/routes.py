@@ -7,6 +7,7 @@ from app.models import Mechanics
 from app.models import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.util.auth import encode_token, token_required
+from sqlalchemy.exc import IntegrityError
 
 @mechanics_bp.route('/login', methods=['POST'])
 
@@ -19,7 +20,7 @@ def login():
     mechanic = db.session.query(Mechanics).where(Mechanics.email==data['email']).first() #Search my db for a mechanic with the passed in email
 
     if mechanic and check_password_hash(mechanic.password, data['password']): #Check the mechanic stored password hash against the password that was sent
-        token = encode_token(mechanic.id, role  = 'mechanic')
+        token = encode_token(mechanic.id, role='mechanic')
         return jsonify({
             "message": f'Welcome {mechanic.last_name}',
             "token": token,
@@ -38,9 +39,13 @@ def create_mechanic():
     
     data['password'] = generate_password_hash(data['password'])
     new_mechanic = Mechanics(**data) #Creating User object
-    db.session.add(new_mechanic)
-    db.session.commit()
-    return mechanic_schema.jsonify(new_mechanic), 201 
+    try:
+        db.session.add(new_mechanic)
+        db.session.commit()
+        return mechanic_schema.jsonify(new_mechanic), 201 
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify("email already exists"),400
 
 #read Mechanics
 @mechanics_bp.route('/', methods=['GET'])
