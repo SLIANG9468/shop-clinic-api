@@ -67,10 +67,8 @@ class TestMechanics(unittest.TestCase):
             "salary": 1000,
             "address": "123 Fun St."
         }
-
         response = self.client.post('/mechanics/', json=mechanic_payload)
         self.assertEqual(response.status_code, 400)
-
 
     def test_get_mechanics(self):
     
@@ -87,38 +85,36 @@ class TestMechanics(unittest.TestCase):
 
         response = self.client.post('/mechanics/login', json=login_creds)
         self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertIn('token', data)
-
+        self.assertIn('token', response.json)
 
     def test_delete(self):
         headers = {"Authorization": "Bearer " + self.token}
 
-        response = self.client.delete("/mechanics/1/", headers=headers) #Sending delete request to /mechanics with my Authorization headers
+        response = self.client.delete("/mechanics", headers=headers) #Sending delete request to /mechanics with my Authorization headers
         self.assertEqual(response.status_code, 200)
         data = response.get_json()
         self.assertEqual(data['message'], 'Successfully deleted mechanic 1')
 
 
-    # def test_unauthorized_delete(self):
+    def test_unauthorized_delete(self):
 
-    #     response = self.client.delete("/mechanics/1/") #Sending delete request to /mechanics without token
-    #     self.assertEqual(response.status_code, 401) #Should get an error response
+        response = self.client.delete("/mechanics") #Sending delete request to /mechanics without token
+        self.assertEqual(response.status_code, 401) #Should get an error response
 
     
-    # def test_update(self):
-    #     headers = {"Authorization": "Bearer " + self.token}
+    def test_update(self):
+        headers = {"Authorization": "Bearer " + self.token}
 
-    #     update_payload = {
-    #         "first_name": "first_name_test",
-    #         "last_name": "last_name_test",
-    #         "email": "newtester@email.com",
-    #         "password": "123",
-    #         "salary": 1000,
-    #         "address": "123 Fun St."
-    #     }
+        update_payload = {
+            "first_name": "first_name_test",
+            "last_name": "last_name_test",
+            "email": "newtester@email.com",
+            "password": "123",
+            "salary": 1000,
+            "address": "123 Fun St."
+        }
 
-    #     response = self.client.put('/mechanics/1/', headers=headers, json=update_payload)
-    #     self.assertEqual(response.status_code, 200)
-    #     data = response.get_json()
-    #     self.assertEqual(data['email'], 'newtester@email.com')
+        response = self.client.put('/mechanics', headers=headers, json=update_payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['email'], 'newtester@email.com')

@@ -69,6 +69,9 @@ def read_mechanic():
 def delete_mechanic():
     token_id = request.mechanic_id
     mechanic = db.session.get(Mechanics, token_id)
+    if not mechanic:
+        return jsonify({"message":"mechanic not found"}), 404
+    
     db.session.delete(mechanic)
     db.session.commit()
     return jsonify({"message": f"Successfully deleted mechanic {token_id}"}), 200
