@@ -37,15 +37,17 @@ def create_mechanic():
     except ValidationError as e:
         return jsonify(e.messages), 400 #Returning the error as a response so my client can see whats wrong.
     
+    taken = db.session.query(Mechanics).where(Mechanics.email==data['email']).first()
+    if taken: 
+        return jsonify({'message':'email is taken'}), 400
+    
     data['password'] = generate_password_hash(data['password'])
     new_mechanic = Mechanics(**data) #Creating User object
-    try:
-        db.session.add(new_mechanic)
-        db.session.commit()
-        return mechanic_schema.jsonify(new_mechanic), 201 
-    except IntegrityError as e:
-        db.session.rollback()
-        return jsonify("email already exists"),400
+
+    db.session.add(new_mechanic)
+    db.session.commit()
+    return mechanic_schema.jsonify(new_mechanic), 201 
+
 
 #read Mechanics
 @mechanics_bp.route('/', methods=['GET'])
@@ -54,26 +56,28 @@ def read_mechanics():
     return mechanics_schema.jsonify(mechanics), 200
 
 #read individual mechanic
-@mechanics_bp.route('/<int:mechanic_id>', methods=['GET'])
-def read_mechanic(mechanic_id):
-    print
+@mechanics_bp.route('/profile', methods=['GET'])
+@token_required
+def read_mechanic():
+    mechanic_id = request.mechanic_id
     mechanic = db.session.get(Mechanics, mechanic_id)
     return mechanic_schema.jsonify(mechanic), 200
 
 #Delete a mechanic
-@mechanics_bp.route('/<int:mechanic_id>', methods=['DELETE'])
+@mechanics_bp.route('', methods=['DELETE'])
 @token_required
-def delete_mechanic(mechanic_id):
+def delete_mechanic():
     token_id = request.mechanic_id
     mechanic = db.session.get(Mechanics, token_id)
     db.session.delete(mechanic)
     db.session.commit()
-    return jsonify({"message": f"Successfully deleted mechanic {mechanic_id}"}), 200
-
+    return jsonify({"message": f"Successfully deleted mechanic {token_id}"}), 200
 
 #Update a mechanic
-@mechanics_bp.route('/<int:mechanic_id>', methods=['PUT'])
-def update_mechanic(mechanic_id):
+@mechanics_bp.route('', methods=['PUT'])
+@token_required
+def update_mechanic():
+    mechanic_id = request.mechanic_id
     mechanic = db.session.get(Mechanics, mechanic_id) #Query for our mechanic to update
 
     if not mechanic: #Checking if I got a mechanic
@@ -84,6 +88,7 @@ def update_mechanic(mechanic_id):
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
     
+    mechanic_data['password'] = generate_password_hash(mechanic_data['password'])
     for key, value in mechanic_data.items(): #Looping over attributes and values from mechanic data dictionary
         setattr(mechanic, key, value) # setting Object, Attribute, Value to replace
 
