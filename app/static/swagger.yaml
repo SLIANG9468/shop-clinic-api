@@ -4,9 +4,9 @@ info:
   description: "Used to manage the everyday functionalities of a mechanics"
   version: "0.0.1"
 
-host: "https://shop-clinic-api.onrender.com/" #During development my API is served on my local host (will change when we go to prod)
+host: "shop-clinic-api.onrender.com" #During development my API is served on my local host (will change when we go to prod)
 schemes:
-  - "http"
+  - "https"
 consumes:
   - "application/json" #MY api recieves json data
 produces:
@@ -84,51 +84,6 @@ paths: #Information about our routes
           description: "Successfully Retrieved Mechanics"
           schema:
             $ref: "#/definitions/MechanicsResponse"
-
-  /mechanics/{id}: #endpoint starts the path
-    put: #Update a mechanic
-      tags:
-        - Mechanics
-      summary: "Update Mechanic Endpoint"
-      description: "Endpoint to update a mechanic, requires a token, mechanic will be identified by the token"
-      security:
-        - bearerAuth: [] #Referencing our Token Auth definition (Make sure when authorizing in Swagger you add Bearer <Token>)
-      parameters:
-        - in: "body"
-          name: "body"
-          description: "Mechanic Updates"
-          required: true
-          schema:
-            $ref: "#/definitions/MechanicUpdateInput"
-          
-      responses:
-        200:
-          description: "Update Successful"
-          schema:
-            $ref: "#/definitions/MechanicUpdateResponse"
-          examples:
-            application/json:
-              first_name: "Steve"
-              last_name: "Zhang"
-              email: "steve.zhang@email.com"
-              id: 6
-              password: "<encrypted password>"
-              salary: 1000
-              address: "123 Fun St."
-    
-    delete: #Delete a mechanic
-      tags:
-        - Mechanics
-      summary: "Delete a Mechanic"
-      description: "Delete a mechanic, requires a token, token will be used to identify mechanic to delete."
-      security:
-        - bearerAuth: []
-      parameters:
-      responses:
-        200:
-        description:"Delete Successfully"
-        message: "Successfully deleted mechanic 6"
-
 
 
 definitions: #Information about the shape of input and output json
